@@ -2,6 +2,7 @@
 // Person controller
 //
 const Person = require('../domain/Person')
+const assert = require('assert')
 
 let personlist = []
 
@@ -42,7 +43,19 @@ module.exports = {
 
     deletePersonById(req, res, next){
         console.log('delete was called')
+
         const id = req.params.id
+
+        try {
+            // precondities:
+            // id is aanwezig, groter dan 0 en kleiner dan length
+            assert(id, 'Parameter id must be provided')
+            assert(!isNaN(id) && id >= 0 && id < personlist.length, 'Invalid id')
+        } catch (error) {
+            console.log('We got an error: ' + error.toString())
+            next(error)
+            return            
+        }
 
         // delete person met index id uit de personlist
         personlist.splice(id, 1)
